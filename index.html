@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="az">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İş Axtarışı Az - Vakansiyalar və Karyera</title>
+    <!-- Подключение Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Настройка шрифта Inter и стилей для современного вида -->
+    <style>
+        :root {
+            --primary-color: #007bff;
+            /* Синий для акцентов, как на hh.ru */
+            --secondary-color: #28a745;
+            /* Зеленый для кнопок действия */
+            --project-color: #f97316;
+            /* Оранжевый для проектных работ */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9;
+        }
+
+        .text-primary {
+            color: var(--primary-color);
+        }
+
+        .bg-primary-dark {
+            background-color: #0056b3;
+        }
+
+        .shadow-soft {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .job-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-active {
+            border-bottom-width: 3px;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .dashboard-menu a {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .dashboard-menu a:hover {
+            background-color: #f0f4f7;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <!-- Загрузка шрифта Inter -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#007bff',
+                        'primary-dark': '#0056b3',
+                        'secondary': '#28a745',
+                        'project': '#f97316',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Header (Шапка сайта) -->
+    <header class="bg-white shadow-soft sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <!-- Логотип -->
+            <div class="text-2xl font-bold text-primary cursor-pointer" onclick="showSection('mainSearchSection')">
+                <span class="hidden sm:inline">İş Axtarışı</span> AZ
+            </div>
+
+            <!-- Навигация -->
+            <nav class="hidden md:flex space-x-6 text-gray-600 font-medium">
+                <a href="#" class="hover:text-primary transition duration-150"
+                    onclick="showSection('mainSearchSection'); event.preventDefault();">Vakansiyalar</a>
+                <a href="#" class="hover:text-primary transition duration-150"
+                    onclick="showSection('companiesSection'); event.preventDefault();">Şirkətlər</a>
+                <a href="#" class="hover:text-primary transition duration-150"
+                    onclick="showSection('servicesSection'); event.preventDefault();">Xidmətlər</a>
+                <a href="#" class="hover:text-primary transition duration-150"
+                    onclick="showSection('employerInfoSection'); event.preventDefault();">İşəgötürənlər</a>
+            </nav>
+
+            <!-- Кнопки действий -->
+            <div class="flex items-center space-x-3 relative">
+                <!-- Dropdown для Giriş -->
+                <button id="loginButton"
+                    class="text-gray-600 hover:text-primary text-sm font-medium transition duration-150 hidden sm:inline relative"
+                    onclick="toggleLoginDropdown(event)">
+                    <span>Giriş / Kabinet</span>
+                </button>
+
+                <div id="loginDropdown"
+                    class="hidden absolute right-0 top-10 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-20">
+                    <div class="py-1">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            onclick="showUserDashboard('seeker'); event.preventDefault();">İş Axtaranın Kabineti</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            onclick="showUserDashboard('employer'); event.preventDefault();">İşəgötürənin Kabineti</a>
+                    </div>
+                </div>
+
+                <button
+                    class="bg-primary text-white px-4 py-2 rounded-lg font-semibold text-sm hover:bg-primary-dark transition duration-150 shadow-md"
+                    onclick="showUserDashboard('seeker')">
+                    CV Yerləşdir
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Главная страница поиска (Vakansiyalar) -->
+    <div id="mainSearchSection" class="block">
+        <!-- Main Search Area (Основная область поиска) -->
+        <div class="bg-white py-10 shadow-lg mb-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-6 text-center">
+                    Milyonlarla Vakansiya Arasında Öz İşini Tap!
+                </h1>
+                <div
+                    class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 bg-gray-100 p-3 rounded-xl shadow-inner">
+                    <!-- Поле поиска -->
+                    <input type="text" id="searchInput" placeholder="Peşə, vəzifə və ya şirkət adı"
+                        class="flex-1 p-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 text-base">
+
+                    <!-- Фильтр Города -->
+                    <select id="cityFilter"
+                        class="p-3 rounded-lg border-2 border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition duration-150 w-full md:w-auto text-base">
+                        <option value="">Bütün Azərbaycan</option>
+                        <option value="Baku">Bakı</option>
+                        <option value="Ganja">Gəncə</option>
+                        <option value="Sumgait">Sumqayıt</option>
+                        <option value="Absheron">Abşeron</option>
+                    </select>
+
+                    <!-- Кнопка поиска -->
+                    <button id="searchButton"
+                        class="bg-secondary text-white px-8 py-3 rounded-lg font-bold text-base hover:bg-green-700 transition duration-150 shadow-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        Axtar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content (Основной контент) -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
+            <div class="flex flex-col lg:flex-row gap-8">
+
+                <!-- Sidebar Filters (Боковые фильтры) -->
+                <div class="lg:w-1/4 bg-white p-6 rounded-xl shadow-soft h-fit">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Filtrlər</h2>
+
+                    <div class="space-y-6">
+                        <!-- Фильтр города (дублируем для мобильных, но скрываем на широких экранах, т.к. есть в шапке) -->
+                        <div class="hidden lg:block">
+                            <label for="city_filter_main"
+                                class="block text-sm font-medium text-gray-700 mb-1">Şəhər</label>
+                            <select id="city_filter_main"
+                                class="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                                <option>Bakı</option>
+                                <option>Gəncə</option>
+                                <option>Sumqayıt</option>
+                                <option>Lənkəran</option>
+                            </select>
+                        </div>
+
+                        <!-- Фильтр зарплаты -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Əmək haqqı</label>
+                            <input type="number" placeholder="min AZN"
+                                class="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                            <div class="flex items-center mt-2">
+                                <input id="salaryCheckbox" type="checkbox"
+                                    class="h-4 w-4 text-primary rounded border-gray-300 focus:ring-primary">
+                                <label for="salaryCheckbox" class="ml-2 text-sm text-gray-600">Göstərilən
+                                    məbləğdən</label>
+                            </div>
+                        </div>
+
+                        <!-- Фильтр опыта -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Təcrübə</label>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center"><input type="radio" name="experience" id="exp1"
+                                        class="text-primary focus:ring-primary"><label for="exp1"
+                                        class="ml-2 text-gray-600">Təcrübəsiz</label></div>
+                                <div class="flex items-center"><input type="radio" name="experience" id="exp2"
+                                        class="text-primary focus:ring-primary"><label for="exp2"
+                                        class="ml-2 text-gray-600">1 ildən 3 ilə qədər</label></div>
+                                <div class="flex items-center"><input type="radio" name="experience" id="exp3"
+                                        class="text-primary focus:ring-primary"><label for="exp3"
+                                        class="ml-2 text-gray-600">3 ildən 6 ilə qədər</label></div>
+                                <div class="flex items-center"><input type="radio" name="experience" id="exp4"
+                                        class="text-primary focus:ring-primary"><label for="exp4"
+                                        class="ml-2 text-gray-600">6 ildən çox</label></div>
+                            </div>
+                        </div>
+
+                        <!-- Тип занятости -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Məşğulluq növü</label>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center"><input type="checkbox" name="employment"
+                                        class="text-primary rounded border-gray-300 focus:ring-primary"><label
+                                        class="ml-2 text-gray-600">Tam ştat</label></div>
+                                <div class="flex items-center"><input type="checkbox" name="employment"
+                                        class="text-primary rounded border-gray-300 focus:ring-primary"><label
+                                        class="ml-2 text-gray-600">Part-time</label></div>
+                                <div class="flex items-center"><input type="checkbox" name="employment"
+                                        class="text-primary rounded border-gray-300 focus:ring-primary"><label
+                                        class="ml-2 text-gray-600">Freelance</label></div>
+                            </div>
+                        </div>
+
+                        <!-- Кнопка "Применить" для мобильных -->
+                        <button
+                            class="w-full bg-primary text-white py-2 rounded-lg font-semibold hover:bg-primary-dark transition duration-150 mt-4 lg:hidden">
+                            Filtrləri Tətbiq et
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Job Listings (Список вакансий) -->
+                <div class="lg:w-3/4">
+                    <!-- Tabs for Job Types -->
+                    <div class="flex border-b border-gray-200 mb-4">
+                        <button id="tabPermanent" onclick="showJobType('permanent')"
+                            class="py-2 px-4 text-gray-500 transition duration-150 hover:text-primary tab-active">
+                            Daimi İşlər (Permanent)
+                        </button>
+                        <button id="tabProject" onclick="showJobType('project')"
+                            class="py-2 px-4 text-gray-500 transition duration-150 hover:text-primary">
+                            Layihə İşləri (Project)
+                        </button>
+                    </div>
+
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Daimi İşlər — 350 Vakansiya tapıldı</h2>
+
+                    <!-- Mock Job Data (Имитация данных) -->
+                    <div id="jobListingsPermanent" class="space-y-4">
+                        <!-- Job Card 1 (Permanent) -->
+                        <div class="job-card bg-white p-6 rounded-xl shadow-soft border-l-4 border-primary transition duration-300 cursor-pointer"
+                            onclick="showVacancyDetail('Senior Frontend Developer (React)', 'Tech Solutions LLC', '3000 - 4500 AZN', 'primary')">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3
+                                        class="text-xl font-bold text-gray-900 hover:text-primary transition duration-150">
+                                        Senior Frontend Developer (React)</h3>
+                                    <p class="text-gray-600 mt-1">Tech Solutions LLC</p>
+                                </div>
+                                <span class="text-lg font-bold text-secondary">3000 - 4500 AZN</span>
+                            </div>
+                            <div class="mt-3 text-sm text-gray-500 flex space-x-4">
+                                <span><span class="font-semibold">Şəhər:</span> Bakı</span>
+                                <span><span class="font-semibold">Təcrübə:</span> 3-6 il</span>
+                                <span><span class="font-semibold">Yerləşdirilib:</span> Bugün</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-3 hidden md:block">
+                                Böyük miqyaslı veb tətbiqlərin hazırlanması üzrə təcrübəli mütəxəssis axtarılır. React,
+                                Redux və TypeScript bilikləri tələb olunur.
+                            </p>
+                            <button
+                                class="mt-4 bg-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transition duration-150"
+                                onclick="event.stopPropagation(); showMockMessage('Müraciətiniz göndərildi!')">
+                                Müraciət et
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="jobListingsProject" class="space-y-4 hidden">
+                        <!-- Job Card 4 (Project) -->
+                        <div class="job-card bg-white p-6 rounded-xl shadow-soft border-l-4 border-project transition duration-300 cursor-pointer"
+                            onclick="showVacancyDetail('Logo Dizaynı (Layihə)', 'Yeni Startap " Eko
+                            Bağ"', '500 AZN (Birdəfəlik)' , 'project' )">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3
+                                        class="text-xl font-bold text-gray-900 hover:text-project transition duration-150">
+                                        Logo Dizaynı (Layihə)</h3>
+                                    <p class="text-gray-600 mt-1">Yeni Startap "Eko Bağ"</p>
+                                </div>
+                                <span class="text-lg font-bold text-project">500 AZN (Birdəfəlik)</span>
+                            </div>
+                            <div class="mt-3 text-sm text-gray-500 flex space-x-4">
+                                <span><span class="font-semibold">Şəhər:</span> Uzaqdan</span>
+                                <span><span class="font-semibold">Müddət:</span> 1 Həftə</span>
+                                <span><span class="font-semibold">Yerləşdirilib:</span> 1 saat əvvəl</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-3 hidden md:block">
+                                Ekoloji bağçılıq üçün sadə və yadda qalan bir loqo dizaynına ehtiyacımız var. Tez cavab
+                                tələb olunur.
+                            </p>
+                            <button
+                                class="mt-4 bg-project text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-orange-600 transition duration-150"
+                                onclick="event.stopPropagation(); showMockMessage('Layihəyə təklif göndərildi!')">
+                                Təklif göndər
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <!-- Pagination (Пагинация) -->
+                    <div class="flex justify-center mt-8">
+                        <nav class="flex items-center space-x-2" aria-label="Pagination">
+                            <a href="#"
+                                class="p-3 text-gray-500 hover:bg-gray-200 rounded-full transition duration-150">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                            </a>
+                            <a href="#"
+                                class="p-3 bg-primary text-white font-semibold rounded-full w-10 h-10 flex items-center justify-center shadow-md">1</a>
+                            <a href="#"
+                                class="p-3 text-gray-700 hover:bg-gray-200 rounded-full w-10 h-10 flex items-center justify-center transition duration-150">2</a>
+                            <a href="#"
+                                class="p-3 text-gray-700 hover:bg-gray-200 rounded-full w-10 h-10 flex items-center justify-center transition duration-150">3</a>
+                            <a href="#"
+                                class="p-3 text-gray-500 hover:bg-gray-200 rounded-full transition duration-150">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </a>
+                        </nav>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Раздел Личного Кабинета -->
+    <div id="dashboardSection" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <h1 id="dashboardTitle" class="text-3xl font-extrabold text-gray-900 mb-8">Kabinet</h1>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Боковое меню Кабинета -->
+            <div class="lg:w-1/4 bg-white p-6 rounded-xl shadow-soft h-fit">
+                <nav id="dashboardMenu" class="flex flex-col space-y-2 dashboard-menu">
+                    <!-- Menu items will be dynamically generated/shown based on user type -->
+                </nav>
+            </div>
+
+            <!-- Основной контент Кабинета -->
+            <div id="dashboardContent" class="lg:w-3/4 bg-white p-8 rounded-xl shadow-soft">
+                <!-- Content will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Раздел Деталей Вакансии -->
+    <div id="vacancyDetailSection" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <button onclick="showSection('mainSearchSection')"
+            class="text-primary hover:text-primary-dark mb-6 flex items-center font-semibold">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+            Bütün Vakansiyalara Qayıt
+        </button>
+        <div id="vacancyDetailContent">
+            <!-- Content will be injected here by showVacancyDetail -->
+        </div>
+    </div>
+
+    <!-- Раздел Şirkətlər (Компании) -->
+    <div id="companiesSection" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <h1 class="text-3xl font-extrabold text-gray-900 mb-8">Şirkətlər Kataloqu</h1>
+        <p class="text-gray-600 mb-6">Azərbaycanın ən böyük şirkətlərində vakansiya axtarışı.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Company Card 1 -->
+            <div class="bg-white p-6 rounded-xl shadow-soft border-t-4 border-blue-500">
+                <h3 class="text-xl font-bold text-gray-900">Tech Solutions LLC</h3>
+                <p class="text-sm text-gray-500 mt-1">İT / Proqram Təminatı</p>
+                <p class="text-2xl font-bold text-primary mt-3">12</p>
+                <p class="text-sm text-gray-600">Açıq vakansiya</p>
+                <button class="mt-4 bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-primary-dark">Şirkət
+                    Profili</button>
+            </div>
+            <!-- Company Card 2 -->
+            <div class="bg-white p-6 rounded-xl shadow-soft border-t-4 border-green-500">
+                <h3 class="text-xl font-bold text-gray-900">Az Retail Group</h3>
+                <p class="text-sm text-gray-500 mt-1">Pərakəndə Satış</p>
+                <p class="text-2xl font-bold text-primary mt-3">28</p>
+                <p class="text-sm text-gray-600">Açıq vakansiya</p>
+                <button class="mt-4 bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-primary-dark">Şirkət
+                    Profili</button>
+            </div>
+            <!-- Company Card 3 -->
+            <div class="bg-white p-6 rounded-xl shadow-soft border-t-4 border-yellow-500">
+                <h3 class="text-xl font-bold text-gray-900">Global Consulting AZ</h3>
+                <p class="text-sm text-gray-500 mt-1">Maliyyə / Konsaltinq</p>
+                <p class="text-2xl font-bold text-primary mt-3">5</p>
+                <p class="text-sm text-gray-600">Açıq vakansiya</p>
+                <button class="mt-4 bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-primary-dark">Şirkət
+                    Profili</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Раздел Xidmətlər (Услуги) -->
+    <div id="servicesSection" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <h1 class="text-3xl font-extrabold text-gray-900 mb-8">Əlavə Xidmətlər</h1>
+        <p class="text-gray-600 mb-8">Karyera imkanlarınızı genişləndirmək üçün peşəkar xidmətlərdən istifadə edin.</p>
+
+        <div class="space-y-6">
+            <!-- Service Card 1 -->
+            <div class="bg-white p-6 rounded-xl shadow-soft flex items-start space-x-6">
+                <div class="flex-shrink-0 text-3xl text-primary font-bold pt-1">CV</div>
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900">Premium CV Hazırlanması</h3>
+                    <p class="text-gray-700 mt-1">Peşəkar HR mütəxəssisləri tərəfindən sizin üçün diqqətçəkən və
+                        işəgötürənlərin tələblərinə cavab verən CV-nin hazırlanması.</p>
+                    <button class="mt-3 bg-secondary text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700">Daha
+                        Ətraflı (80 AZN)</button>
+                </div>
+            </div>
+            <!-- Service Card 2 -->
+            <div class="bg-white p-6 rounded-xl shadow-soft flex items-start space-x-6">
+                <div class="flex-shrink-0 text-3xl text-primary font-bold pt-1">İP</div>
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900">İşə Hazırlıq Proqramı</h3>
+                    <p class="text-gray-700 mt-1">Müsahibə simulyasiyaları, karyera məsləhətləri və peşəkar inkişaf
+                        kursları.</p>
+                    <button class="mt-3 bg-secondary text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700">Daha
+                        Ətraflı (150 AZN)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Раздел İşəgötürənlər (Для Работодателей) -->
+    <div id="employerInfoSection" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-8">İşəgötürənlər üçün Həllər</h1>
+        <div class="bg-primary text-white p-8 rounded-xl shadow-soft mb-8">
+            <h2 class="text-2xl font-bold mb-3">Bizimlə Ən Yaxşı Namizədləri Tapın!</h2>
+            <p class="opacity-90">Həm daimi, həm də layihə işləri üçün geniş namizədlər bazasına çıxış əldə edin.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Feature 1 -->
+            <div class="bg-white p-6 rounded-xl shadow-soft">
+                <h3 class="text-xl font-bold text-primary mb-2">Sürətli Vakansiya Yerləşdirmə</h3>
+                <p class="text-gray-700">Bir neçə dəqiqə ərzində vakansiyanızı dərc edin və dərhal müraciətləri qəbul
+                    etməyə başlayın.</p>
+            </div>
+            <!-- Feature 2 -->
+            <div class="bg-white p-6 rounded-xl shadow-soft">
+                <h3 class="text-xl font-bold text-primary mb-2">Çat vasitəsilə Ünsiyyət</h3>
+                <p class="text-gray-700">Namizədlərlə birbaşa platformamızın daxili çat sistemi vasitəsilə əlaqə
+                    saxlayın.</p>
+            </div>
+        </div>
+
+        <div class="mt-10 text-center">
+            <button
+                class="bg-secondary text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-green-700 transition duration-150 shadow-lg"
+                onclick="showUserDashboard('employer')">
+                İşəgötürənin Kabinetinə Giriş
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer (Футер) - Неизменен -->
+    <footer class="bg-gray-800 text-white mt-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                    <h4 class="font-bold text-lg mb-4">İş Axtarana</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-primary transition duration-150">Vakansiyalar kataloqu</a>
+                        </li>
+                        <li><a href="#" class="hover:text-primary transition duration-150">CV Yarat</a></li>
+                        <li><a href="#" class="hover:text-primary transition duration-150">Peşə sahələri</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4">İşəgötürənə</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-primary transition duration-150">Şirkətlər kataloqu</a></li>
+                        <li><a href="#" class="hover:text-primary transition duration-150">Vakansiya yerləşdir</a></li>
+                        <li><a href="#" class="hover:text-primary transition duration-150">Abunəliklər</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Şəhərlər</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-primary transition duration-150">Bakı vakansiyaları</a></li>
+                        <li><a href="#" class="hover:text-primary transition duration-150">Gəncə vakansiyaları</a></li>
+                        <li><a href="#" class="hover:text-primary transition duration-150">Sumqayıt vakansiyaları</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Əlaqə</h4>
+                    <p class="text-sm text-gray-400">Email: info@ish-az.com</p>
+                    <p class="text-sm text-gray-400">Tel: +994 50 123 45 67</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-sm text-gray-400">
+                &copy; 2025 İş Axtarışı AZ. Bütün hüquqlar qorunur.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript для управления интерфейсом -->
+    <script>
+        // --- UI Section Management ---
+
+        function showSection(sectionId) {
+            // Определяем все основные секции
+            const allSections = [
+                'mainSearchSection',
+                'dashboardSection',
+                'companiesSection',
+                'servicesSection',
+                'employerInfoSection',
+                'vacancyDetailSection'
+            ];
+
+            // Скрываем все секции
+            allSections.forEach(id => {
+                const section = document.getElementById(id);
+                if (section) {
+                    section.classList.add('hidden');
+                }
+            });
+
+            // Показываем целевую секцию
+            const target = document.getElementById(sectionId);
+            if (target) {
+                target.classList.remove('hidden');
+            }
+            // Скрыть выпадающее меню после перехода
+            document.getElementById('loginDropdown').classList.add('hidden');
+        }
+
+        function showUserDashboard(userType) {
+            showSection('dashboardSection');
+            const menu = document.getElementById('dashboardMenu');
+            const content = document.getElementById('dashboardContent');
+            const title = document.getElementById('dashboardTitle');
+
+            menu.innerHTML = '';
+            content.innerHTML = '';
+
+            if (userType === 'seeker') {
+                title.textContent = 'İş Axtaranın Kabineti (Namizəd)';
+                menu.innerHTML = `
+                    <a href="#" class="text-gray-700 font-semibold bg-gray-100" onclick="showDashboardContent('cv'); event.preventDefault();">CV-nin Redaktəsi</a>
+                    <a href="#" class="text-gray-700" onclick="showDashboardContent('applications'); event.preventDefault();">Müraciətlər</a>
+                    <a href="#" class="text-gray-700" onclick="showDashboardContent('messages'); event.preventDefault();">Mesajlar (Çat)</a>
+                    <a href="#" class="text-gray-700" onclick="showDashboardContent('settings'); event.preventDefault();">Ayarlar</a>
+                `;
+                showDashboardContent('cv'); // Показать CV по умолчанию
+            } else if (userType === 'employer') {
+                title.textContent = 'İşəgötürənin Kabineti (Şirkət)';
+                menu.innerHTML = `
+                    <a href="#" class="text-gray-700 font-semibold bg-gray-100" onclick="showDashboardContent('vacancies'); event.preventDefault();">Açıq Vakansiyalar</a>
+                    <a href="#" class="text-gray-700" onclick="showDashboardContent('candidates'); event.preventDefault();">Namizədlər bazası</a>
+                    <a href="#" class="text-gray-700" onclick="showDashboardContent('employer_messages'); event.preventDefault();">Mesajlar (Çat)</a>
+                    <a href="#" class="text-gray-700" onclick="showDashboardContent('post_vacancy'); event.preventDefault();">Vakansiya Yerləşdir</a>
+                `;
+                showDashboardContent('vacancies'); // Показать вакансии по умолчанию
+            }
+
+            // Добавить обработчик для подсветки активного пункта меню
+            menu.querySelectorAll('a').forEach(item => {
+                item.addEventListener('click', function () {
+                    menu.querySelectorAll('a').forEach(link => link.classList.remove('bg-gray-100', 'font-semibold'));
+                    this.classList.add('bg-gray-100', 'font-semibold');
+                });
+            });
+        }
+
+        function showVacancyDetail(title, company, salary, type) {
+            showSection('vacancyDetailSection');
+            const detailContent = document.getElementById('vacancyDetailContent');
+
+            const colorClass = type === 'project' ? 'bg-project' : 'bg-secondary';
+            const titleColor = type === 'project' ? 'text-project' : 'text-secondary';
+            const actionText = type === 'project' ? 'Layihəyə Təklif Göndər' : 'Vakansiyaya Müraciət et';
+
+            detailContent.innerHTML = `
+                <div class="bg-white p-6 rounded-xl shadow-soft">
+                    <h1 class="text-4xl font-extrabold text-gray-900 mb-2">${title}</h1>
+                    <p class="text-xl text-primary font-semibold mb-4">${company}</p>
+                    <span class="inline-block ${colorClass} text-white text-lg font-bold px-4 py-2 rounded-lg mb-6">${salary}</span>
+
+                    <h3 class="text-2xl font-bold text-gray-800 border-b pb-2 mb-4">Əsas Məlumatlar</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-6">
+                        <div><p class="font-semibold">Şəhər:</p><p>${type === 'project' ? 'Uzaqdan' : 'Bakı'}</p></div>
+                        <div><p class="font-semibold">Təcrübə:</p><p>${type === 'project' ? '0-5 il' : '3-6 il'}</p></div>
+                        <div><p class="font-semibold">Məşğulluq:</p><p>${type === 'project' ? 'Layihə' : 'Tam ştat'}</p></div>
+                        <div><p class="font-semibold">Yerləşdirilib:</p><p>Bugün</p></div>
+                    </div>
+
+                    <h3 class="text-2xl font-bold text-gray-800 border-b pb-2 mb-4">Vəzifə Öhdəlikləri</h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4 mb-6">
+                        <li>${type === 'project' ? 'Verilən tələblərə uyğun işi vaxtında təhvil vermək.' : 'Böyük miqyaslı React tətbiqinin dizaynı və həyata keçirilməsi.'}</li>
+                        <li>${type === 'project' ? 'Müştəri ilə birbaşa ünsiyyət qurmaq.' : 'Kod keyfiyyətinin və performansının optimallaşdırılması.'}</li>
+                        <li>${type === 'project' ? 'Sənədləşmə işlərini aparmaq.' : 'TypeScript və müasir JavaScript standartlarından istifadə.'}</li>
+                    </ul>
+
+                    <h3 class="text-2xl font-bold text-gray-800 border-b pb-2 mb-4">Tələblər</h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700 ml-4 mb-8">
+                        <li>${type === 'project' ? 'Layihənin sahəsi üzrə müvafiq bacarıq.' : 'Ən azı 3 illik Frontend Developer təcrübəsi.'}</li>
+                        <li>${type === 'project' ? 'Yüksək məsuliyyət hissi və vaxtında işi təhvil vermə.' : 'React, Redux/Context API üzrə dərin biliklər.'}</li>
+                        <li>Git ilə işləmək bacarığı.</li>
+                    </ul>
+                    
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <button class="flex-1 ${colorClass} text-white px-6 py-3 rounded-lg font-bold hover:bg-green-700 transition duration-150 shadow-lg" onclick="showMockMessage('${actionText} göndərildi!')">
+                            ${actionText}
+                        </button>
+                        <button class="flex-1 bg-gray-200 text-gray-800 px-6 py-3 rounded-lg font-bold hover:bg-gray-300 transition duration-150" onclick="showMockMessage('Bu vakansiya yadda saxlanıldı.')">
+                            Yadda saxla
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showDashboardContent(contentType) {
+            const content = document.getElementById('dashboardContent');
+            content.innerHTML = ''; // Очистка контента
+
+            // --- JOB SEEKER CONTENT ---
+            if (contentType === 'cv') {
+                content.innerHTML = `
+                    <h2 class="text-2xl font-bold text-primary mb-6">CV-nin Redaktəsi və PDF Yarat</h2>
+                    <div class="space-y-4">
+                        <input type="text" id="cv_name" placeholder="Ad, Soyad" value="Orxan Quliyev" class="w-full p-3 border border-gray-300 rounded-lg">
+                        <input type="email" id="cv_email" placeholder="Email" value="orxan@mail.az" class="w-full p-3 border border-gray-300 rounded-lg">
+                        <textarea id="cv_experience" placeholder="Təcrübə (ətraflı)" rows="5" class="w-full p-3 border border-gray-300 rounded-lg">5 il "Tech Solutions LLC" şirkətində Senior Developer kimi çalışmışam. React və TypeScript üzrə güclü biliklərə sahibəm.</textarea>
+                        
+                        <h3 class="font-semibold text-lg pt-4 border-t mt-6">PDF Rezümenin Hazırlanması</h3>
+                        <p class="text-sm text-gray-600">Bütün məlumatlar daxil edildikdən sonra bir kliklə peşəkar formatlı PDF faylı əldə edin.</p>
+                        <button onclick="generatePdfMock()" class="bg-primary text-white px-6 py-3 rounded-lg font-bold hover:bg-primary-dark transition duration-150 shadow-md">
+                            CV-ni PDF Yarat
+                        </button>
+                    </div>
+                `;
+            } else if (contentType === 'applications') {
+                content.innerHTML = `
+                    <h2 class="text-2xl font-bold text-primary mb-6">Aktiv Müraciətlər</h2>
+                    <ul class="space-y-4">
+                        <li class="p-4 border rounded-lg shadow-sm">
+                            <p class="font-bold">Backend Developer (Python) - "Digital Core"</p>
+                            <p class="text-sm text-gray-600">Status: <span class="text-yellow-600 font-semibold">Baxılır</span></p>
+                        </li>
+                        <li class="p-4 border rounded-lg shadow-sm">
+                            <p class="font-bold">UI/UX Dizayner - "Kreativ Studiya"</p>
+                            <p class="text-sm text-gray-600">Status: <span class="text-green-600 font-semibold">Müsahibəyə dəvət</span></p>
+                        </li>
+                    </ul>
+                `;
+            } else if (contentType === 'messages') {
+                content.innerHTML = `
+                    <h2 class="text-2xl font-bold text-primary mb-6">Mesajlar (Daxili Çat)</h2>
+                    <div class="h-80 bg-gray-100 p-4 rounded-lg flex flex-col justify-between">
+                        <div class="space-y-3 overflow-y-auto h-full pb-2">
+                            <div class="flex justify-start"><div class="bg-gray-300 p-2 rounded-xl max-w-xs">Salam, Orxan. Sizin CV-niz marağımızı cəlb etdi.</div></div>
+                            <div class="flex justify-end"><div class="bg-primary text-white p-2 rounded-xl max-w-xs">Çox sağ olun! Nə vaxt görüşə bilərik?</div></div>
+                        </div>
+                        <div class="flex mt-3">
+                            <input type="text" placeholder="Mesaj yazın..." class="flex-1 p-2 border rounded-l-lg">
+                            <button class="bg-secondary text-white px-4 py-2 rounded-r-lg hover:bg-green-700">Göndər</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // --- EMPLOYER CONTENT ---
+            else if (contentType === 'vacancies') {
+                content.innerHTML = `
+                    <h2 class="text-2xl font-bold text-primary mb-6">Açıq Vakansiyalar</h2>
+                    <ul class="space-y-4">
+                        <li class="p-4 border rounded-lg shadow-sm flex justify-between items-center">
+                            <div>
+                                <p class="font-bold">Marketinq Meneceri</p>
+                                <p class="text-sm text-gray-600">Aktiv: 45 Müraciət</p>
+                            </div>
+                            <button class="bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-primary-dark" onclick="showDashboardContent('post_vacancy')">Redaktə et</button>
+                        </li>
+                    </ul>
+                `;
+            } else if (contentType === 'candidates') {
+                content.innerHTML = `
+                    <h2 class="text-2xl font-bold text-primary mb-6">Namizədlər bazası (Əlaqə üçün)</h2>
+                    <ul class="space-y-4">
+                         <li class="p-4 border rounded-lg shadow-sm flex justify-between items-center">
+                            <div>
+                                <p class="font-bold">Orxan Quliyev (Senior Frontend)</p>
+                                <p class="text-sm text-gray-600">Təcrübə: 5 il | Bakı</p>
+                            </div>
+                            <button class="bg-secondary text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700" onclick="showMockMessage('Mesaj göndərildi!')">Mesaj yaz</button>
+                        </li>
+                    </ul>
+                `;
+            } else if (contentType === 'post_vacancy') {
+                content.innerHTML = `
+                    <h2 class="text-2xl font-bold text-primary mb-6">Yeni Vakansiya Yerləşdir</h2>
+                    <div class="space-y-4">
+                        <input type="text" placeholder="Vəzifə adı" class="w-full p-3 border border-gray-300 rounded-lg">
+                        <select class="w-full p-3 border border-gray-300 rounded-lg">
+                            <option>Daimi İş</option>
+                            <option>Layihə İşi</option>
+                        </select>
+                        <textarea placeholder="Vəzifə öhdəlikləri və tələblər" rows="7" class="w-full p-3 border border-gray-300 rounded-lg"></textarea>
+                        <input type="number" placeholder="Əmək haqqı (AZN)" class="w-full p-3 border border-gray-300 rounded-lg">
+                        <button class="bg-secondary text-white px-6 py-3 rounded-lg font-bold hover:bg-green-700 transition duration-150">
+                            Vakansiyanı dərc et
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // --- Mock Functions ---
+
+        function generatePdfMock() {
+            // Mock function: In a real application, this would send data to a server to generate a PDF.
+            const name = document.getElementById('cv_name').value;
+            showMockMessage(`PDF fayl "${name}-CV.pdf" hazırlanır...`);
+        }
+
+        function toggleLoginDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('loginDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // --- General UI Utilities ---
+
+        function showMockMessage(message) {
+            // Reusing the simple notification mechanism for mock actions
+            const messageBox = document.createElement('div');
+            messageBox.className = 'fixed top-4 right-4 bg-primary text-white p-4 rounded-xl shadow-xl transition-opacity duration-300 z-50';
+            messageBox.innerHTML = `<strong>Məlumat:</strong> ${message}`;
+            document.body.appendChild(messageBox);
+
+            setTimeout(() => {
+                messageBox.style.opacity = '0';
+                messageBox.classList.add('opacity-0');
+                setTimeout(() => messageBox.remove(), 300);
+            }, 3000);
+        }
+
+        function showJobType(type) {
+            const isPermanent = type === 'permanent';
+
+            // Toggle listings
+            document.getElementById('jobListingsPermanent').classList.toggle('hidden', !isPermanent);
+            document.getElementById('jobListingsProject').classList.toggle('hidden', isPermanent);
+
+            // Update tab styles
+            document.getElementById('tabPermanent').classList.toggle('tab-active', isPermanent);
+            document.getElementById('tabProject').classList.toggle('tab-active', !isPermanent);
+
+            // Update heading (Mock for the sake of presentation)
+            const heading = document.querySelector('.lg\\:w-3\\/4 h2:not(#dashboardTitle)');
+            if (heading) {
+                if (isPermanent) {
+                    heading.textContent = 'Daimi İşlər — 350 Vakansiya tapıldı';
+                } else {
+                    heading.textContent = 'Layihə İşləri — 75 Layihə tapıldı';
+                }
+            }
+        }
+
+        // Initial setup for the search button (retained from previous version)
+        document.getElementById('searchButton').addEventListener('click', function () {
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            const city = document.getElementById('cityFilter').value;
+
+            const termText = searchTerm ? `"${searchTerm}"` : 'boş sorğu';
+            const cityText = city ? ` şəhərində (${city})` : ' bütün şəhərlərdə';
+
+            showMockMessage(`Axtarış aktivdir: ${termText}${cityText}.`);
+        });
+
+        // Close dropdown when clicking outside
+        window.onclick = function (event) {
+            if (!event.target.matches('#loginButton') && !event.target.closest('#loginDropdown')) {
+                const dropdown = document.getElementById('loginDropdown');
+                if (dropdown && !dropdown.classList.contains('hidden')) {
+                    dropdown.classList.add('hidden');
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
